@@ -58,7 +58,6 @@ env/
 .DS_Store
 
 # Configuration files with secrets
-config.py
 *.env
 .env
 
@@ -75,6 +74,8 @@ lancedb_data/
 locomo10_test_results.json
 test_results/
 *.json
+!test_ref/locomo10.json
+.claude/
 
 # Jupyter Notebook
 .ipynb_checkpoints

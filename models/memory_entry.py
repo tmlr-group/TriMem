@@ -52,6 +52,12 @@ class MemoryEntry(BaseModel):
         description="Topic phrase summarized by LLM"
     )
 
+    # [Source Context Linking] - Pointer back to original dialogues
+    source_dialogue_ids: List[int] = Field(
+        default_factory=list,
+        description="List of dialogue IDs this memory was derived from, for fetching original context"
+    )
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -77,5 +83,6 @@ class Dialogue(BaseModel):
     timestamp: Optional[str] = None  # ISO 8601 format
 
     def __str__(self) -> str:
+        id_str = f"[ID:{self.dialogue_id}] "
         time_str = f"[{self.timestamp}] " if self.timestamp else ""
-        return f"{time_str}{self.speaker}: {self.content}"
+        return f"{id_str}{time_str}{self.speaker}: {self.content}"

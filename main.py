@@ -1,5 +1,5 @@
 """
-SimpleMem - Efficient Lifelong Memory for LLM Agents
+TriMem - Efficient Lifelong Memory for LLM Agents
 Main system class integrating all components
 """
 from typing import List, Optional
@@ -7,15 +7,16 @@ from models.memory_entry import Dialogue, MemoryEntry
 from utils.llm_client import LLMClient
 from utils.embedding import EmbeddingModel
 from database.vector_store import VectorStore
+from database.dialogue_store import DialogueStore
 from core.memory_builder import MemoryBuilder
 from core.hybrid_retriever import HybridRetriever
 from core.answer_generator import AnswerGenerator
 import config
 
 
-class SimpleMemSystem:
+class TriMemSystem:
     """
-    SimpleMem Main System
+    TriMem Main System
 
     Three-stage pipeline:
     1. Semantic Structured Compression (Section 3.1): add_dialogue() -> MemoryBuilder -> VectorStore
@@ -40,28 +41,8 @@ class SimpleMemSystem:
         enable_parallel_retrieval: Optional[bool] = None,
         max_retrieval_workers: Optional[int] = None
     ):
-        """
-        Initialize system
-
-        Args:
-        - api_key: OpenAI API key
-        - model: LLM model name
-        - base_url: Custom OpenAI base URL (for compatible APIs)
-        - db_path: Database path
-        - table_name: Memory table name (for parallel processing)
-        - clear_db: Whether to clear existing database
-        - enable_thinking: Enable deep thinking mode (for Qwen and compatible models)
-        - use_streaming: Enable streaming responses
-        - enable_planning: Enable multi-query planning for retrieval (None=use config default)
-        - enable_reflection: Enable reflection-based additional retrieval (None=use config default)
-        - max_reflection_rounds: Maximum number of reflection rounds (None=use config default)
-        - enable_parallel_processing: Enable parallel processing for memory building (None=use config default)
-        - max_parallel_workers: Maximum number of parallel workers for memory building (None=use config default)
-        - enable_parallel_retrieval: Enable parallel processing for retrieval queries (None=use config default)
-        - max_retrieval_workers: Maximum number of parallel workers for retrieval (None=use config default)
-        """
         print("=" * 60)
-        print("Initializing SimpleMem System")
+        print("Initializing TriMem System")
         print("=" * 60)
 
         # Initialize core components
@@ -79,16 +60,37 @@ class SimpleMemSystem:
             table_name=table_name
         )
 
+        # Raw dialogue store for source context linking
+        self.dialogue_store = DialogueStore()
+
         if clear_db:
             print("\nClearing existing database...")
             self.vector_store.clear()
+            self.dialogue_store.clear()
+
+        # Profile manager (conditionally initialized)
+        self.profile_manager = None
+        enable_profiles = getattr(config, 'ENABLE_PROFILES', False)
+        if enable_profiles:
+            from database.profile_store import ProfileStore
+            from core.profile_manager import ProfileManager
+            profile_store_path = getattr(config, 'PROFILE_STORE_PATH', './profile_store.db')
+            profile_store = ProfileStore(db_path=profile_store_path)
+            if clear_db:
+                profile_store.clear()
+            self.profile_manager = ProfileManager(
+                llm_client=self.llm_client,
+                profile_store=profile_store,
+            )
+            print("ProfileManager enabled")
 
         # Initialize three major modules
         self.memory_builder = MemoryBuilder(
             llm_client=self.llm_client,
             vector_store=self.vector_store,
             enable_parallel_processing=enable_parallel_processing,
-            max_parallel_workers=max_parallel_workers
+            max_parallel_workers=max_parallel_workers,
+            profile_manager=self.profile_manager,
         )
 
         self.hybrid_retriever = HybridRetriever(
@@ -98,11 +100,12 @@ class SimpleMemSystem:
             enable_reflection=enable_reflection,
             max_reflection_rounds=max_reflection_rounds,
             enable_parallel_retrieval=enable_parallel_retrieval,
-            max_retrieval_workers=max_retrieval_workers
+            max_retrieval_workers=max_retrieval_workers,
         )
 
         self.answer_generator = AnswerGenerator(
-            llm_client=self.llm_client
+            llm_client=self.llm_client,
+            dialogue_store=self.dialogue_store
         )
 
         print("\nSystem initialization complete!")
@@ -111,11 +114,6 @@ class SimpleMemSystem:
     def add_dialogue(self, speaker: str, content: str, timestamp: Optional[str] = None):
         """
         Add a single dialogue
-
-        Args:
-        - speaker: Speaker name
-        - content: Dialogue content
-        - timestamp: Timestamp (ISO 8601 format)
         """
         dialogue_id = self.memory_builder.processed_count + len(self.memory_builder.dialogue_buffer) + 1
         dialogue = Dialogue(
@@ -124,33 +122,25 @@ class SimpleMemSystem:
             content=content,
             timestamp=timestamp
         )
+        self.dialogue_store.add(dialogue)
         self.memory_builder.add_dialogue(dialogue)
 
     def add_dialogues(self, dialogues: List[Dialogue]):
         """
         Batch add dialogues
-
-        Args:
-        - dialogues: List of dialogues
         """
+        self.dialogue_store.add_batch(dialogues)
         self.memory_builder.add_dialogues(dialogues)
 
     def finalize(self):
         """
-        Finalize dialogue input, process any remaining buffer (safety check)
-        Note: In parallel mode, remaining dialogues are already processed
+        Finalize dialogue input, process any remaining buffer
         """
         self.memory_builder.process_remaining()
 
     def ask(self, question: str) -> str:
         """
         Ask question - Core Q&A interface
-
-        Args:
-        - question: User question
-
-        Returns:
-        - Answer
         """
         print("\n" + "=" * 60)
         print(f"Question: {question}")
@@ -158,9 +148,16 @@ class SimpleMemSystem:
 
         # Stage 3: Intent-Aware Retrieval Planning
         contexts = self.hybrid_retriever.retrieve(question)
-
-        # Generate answer from retrieved context C_q
-        answer = self.answer_generator.generate_answer(question, contexts)
+        print(contexts)
+        # Get profile context (if ProfileManager enabled)
+        profile_context = ""
+        if self.profile_manager:
+            profile_context = self.profile_manager.get_profiles_for_query(question, contexts)
+        print(f"\nProfile Context:\n{profile_context}")
+        # Generate answer from retrieved context C_q (+ profile context)
+        answer = self.answer_generator.generate_answer(
+            question, contexts, profile_context=profile_context
+        )
 
         print("\nAnswer:")
         print(answer)
@@ -212,11 +209,11 @@ def create_system(
     max_parallel_workers: Optional[int] = None,
     enable_parallel_retrieval: Optional[bool] = None,
     max_retrieval_workers: Optional[int] = None
-) -> SimpleMemSystem:
+) -> TriMemSystem:
     """
-    Create SimpleMem system instance (uses config.py defaults when None)
+    Create TriMem system instance (uses config.py defaults when None)
     """
-    return SimpleMemSystem(
+    return TriMemSystem(
         clear_db=clear_db,
         enable_planning=enable_planning,
         enable_reflection=enable_reflection,
@@ -230,11 +227,11 @@ def create_system(
 
 if __name__ == "__main__":
     # Quick test with Qwen3 integration
-    print("🚀 Running SimpleMem Quick Test with Qwen3...")
+    print("Running TriMem Quick Test with Qwen3...")
 
     system = create_system(clear_db=True)
-    print(f"📌 Using embedding model: {system.memory_builder.vector_store.embedding_model.model_name}")
-    print(f"📌 Model type: {system.memory_builder.vector_store.embedding_model.model_type}")
+    print(f"Using embedding model: {system.memory_builder.vector_store.embedding_model.model_name}")
+    print(f"Model type: {system.memory_builder.vector_store.embedding_model.model_type}")
 
     # Add some test dialogues
     system.add_dialogue("Alice", "Bob, let's meet at Starbucks tomorrow at 2pm to discuss the new product", "2025-11-15T14:30:00")
@@ -247,16 +244,15 @@ if __name__ == "__main__":
     # View memories
     system.print_memories()
 
-    # Ask questions (with new features)
-    print("\n🔍 Testing retrieval with planning and reflection...")
+    # Ask questions
+    print("\nTesting retrieval with planning and reflection...")
     system.ask("When will Alice and Bob meet?")
-    
-    print("\n🔍 Testing adversarial question (reflection disabled)...")
+
+    print("\nTesting adversarial question (reflection disabled)...")
     question = "What is Alice's favorite food?"
     contexts = system.hybrid_retriever.retrieve(question, enable_reflection=False)
     answer = system.answer_generator.generate_answer(question, contexts)
     print(f"\nQuestion: {question}")
     print(f"Answer: {answer}")
-    
-    print("\n✅ Quick test completed!")
-    print("\n💡 To run comprehensive tests: python test_qwen3_integration.py")
+
+    print("\nQuick test completed!")

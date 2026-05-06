@@ -61,6 +61,7 @@ class VectorStore:
             pa.field("persons", pa.list_(pa.string())),
             pa.field("entities", pa.list_(pa.string())),
             pa.field("topic", pa.string()),
+            pa.field("source_dialogue_ids", pa.list_(pa.int64())),
             pa.field("vector", pa.list_(pa.float32(), self.embedding_model.dimension))
         ])
 
@@ -78,7 +79,6 @@ class VectorStore:
 
         try:
             if self._is_cloud_storage:
-                # Use native FTS for cloud storage (Tantivy only works with local filesystem)
                 self.table.create_fts_index(
                     "lossless_restatement",
                     use_tantivy=False,
@@ -86,7 +86,6 @@ class VectorStore:
                 )
                 print("FTS index created (native mode for cloud storage)")
             else:
-                # Use Tantivy FTS for local storage (better performance)
                 self.table.create_fts_index(
                     "lossless_restatement",
                     use_tantivy=True,
@@ -111,7 +110,8 @@ class VectorStore:
                     location=r.get("location") or None,
                     persons=list(r.get("persons") or []),
                     entities=list(r.get("entities") or []),
-                    topic=r.get("topic") or None
+                    topic=r.get("topic") or None,
+                    source_dialogue_ids=list(r.get("source_dialogue_ids") or []),
                 ))
             except Exception as e:
                 print(f"Warning: Failed to parse result: {e}")
@@ -137,6 +137,7 @@ class VectorStore:
                 "persons": entry.persons,
                 "entities": entry.entities,
                 "topic": entry.topic or "",
+                "source_dialogue_ids": entry.source_dialogue_ids,
                 "vector": vector.tolist()
             })
 
@@ -173,7 +174,6 @@ class VectorStore:
             if not keywords or self.table.count_rows() == 0:
                 return []
 
-            # LanceDB auto-detects string input as FTS query when FTS index exists
             query = " ".join(keywords)
             results = self.table.search(query).limit(top_k).to_list()
             return self._results_to_entries(results)

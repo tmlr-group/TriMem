@@ -1,682 +1,138 @@
 <div align="center">
 
-<img alt="simplemem_logo" src="https://github.com/user-attachments/assets/6ea54ad1-e007-442c-99d7-1174b10d1fec" width="450">
+<img alt="TriMem logo" src="fig/trimem_logo.svg" width="520">
 
-<div align="center">
-
-## Efficient Lifelong Memory for LLM Agents
-
-<small>Store, compress, and retrieve long-term memories with semantic lossless compression. Works across Claude, Cursor, LM Studio, and more.</small>
+## Rethinking How to Remember: Beyond Atomic Facts in Lifelong LLM Agent Memory
 
 </div>
 
-<p><b>Works with any AI platform that supports MCP or Python integration</b></p>
+## Project layout
 
-<table>
-<tr>
-
-<td align="center" width="100">
-  <a href="https://www.anthropic.com/claude">
-    <img src="https://cdn.simpleicons.org/claude/D97757" width="48" height="48" alt="Claude Desktop" />
-  </a><br/>
-  <sub>
-    <a href="https://www.anthropic.com/claude"><b>Claude Desktop</b></a>
-  </sub>
-</td>
-
-<td align="center" width="100">
-  <a href="https://cursor.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://cdn.simpleicons.org/cursor/FFFFFF">
-      <img src="https://cdn.simpleicons.org/cursor/000000" width="48" height="48" alt="Cursor" />
-    </picture>
-  </a><br/>
-  <sub>
-    <a href="https://cursor.com"><b>Cursor</b></a>
-  </sub>
-</td>
-
-<td align="center" width="100">
-  <a href="https://lmstudio.ai">
-    <img src="https://github.com/lmstudio-ai.png?size=200" width="48" height="48" alt="LM Studio" />
-  </a><br/>
-  <sub>
-    <a href="https://lmstudio.ai"><b>LM Studio</b></a>
-  </sub>
-</td>
-
-<td align="center" width="100">
-  <a href="https://cherry-ai.com">
-    <img src="https://github.com/CherryHQ.png?size=200" width="48" height="48" alt="Cherry Studio" />
-  </a><br/>
-  <sub>
-    <a href="https://cherry-ai.com"><b>Cherry Studio</b></a>
-  </sub>
-</td>
-
-<td align="center" width="100">
-  <a href="https://pypi.org/project/simplemem/">
-    <img src="https://cdn.simpleicons.org/pypi/3775A9" width="48" height="48" alt="PyPI" />
-  </a><br/>
-  <sub>
-    <a href="https://pypi.org/project/simplemem/"><b>PyPI Package</b></a>
-  </sub>
-</td>
-
-<td align="center" width="100">
-  <sub><b>+ Any MCP<br/>Client</b></sub>
-</td>
-
-</tr>
-</table>
-
-<div align="center">
-
-<br/>
-
-[🇨🇳 中文](./docs/i18n/README.zh-CN.md) •
-[🇯🇵 日本語](./docs/i18n/README.ja.md) •
-[🇰🇷 한국어](./docs/i18n/README.ko.md) •
-[🇪🇸 Español](./docs/i18n/README.es.md) •
-[🇫🇷 Français](./docs/i18n/README.fr.md) •
-[🇩🇪 Deutsch](./docs/i18n/README.de.md) •
-[🇧🇷 Português](./docs/i18n/README.pt-br.md)<br/>
-[🇷🇺 Русский](./docs/i18n/README.ru.md) •
-[🇸🇦 العربية](./docs/i18n/README.ar.md) •
-[🇮🇹 Italiano](./docs/i18n/README.it.md) •
-[🇻🇳 Tiếng Việt](./docs/i18n/README.vi.md) •
-[🇹🇷 Türkçe](./docs/i18n/README.tr.md)
-
-<br/>
-
-[![Project Page](https://img.shields.io/badge/🎬_INTERACTIVE_DEMO-Visit_Our_Website-FF6B6B?style=for-the-badge&labelColor=FF6B6B&color=4ECDC4&logoColor=white)](https://aiming-lab.github.io/SimpleMem-Page)
-
-<p align="center">
-  <a href="https://arxiv.org/abs/2601.02553"><img src="https://img.shields.io/badge/arXiv-2601.02553-b31b1b?style=flat&labelColor=555" alt="arXiv"></a>
-  <a href="https://github.com/aiming-lab/SimpleMem"><img src="https://img.shields.io/badge/github-SimpleMem-181717?style=flat&labelColor=555&logo=github&logoColor=white" alt="GitHub"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/aiming-lab/SimpleMem?style=flat&label=license&labelColor=555&color=2EA44F" alt="License"></a>
-  <a href="https://github.com/aiming-lab/SimpleMem/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat&labelColor=555" alt="PRs Welcome"></a>
-  <br/>
-  <a href="https://pypi.org/project/simplemem/"><img src="https://img.shields.io/pypi/v/simplemem?style=flat&label=pypi&labelColor=555&color=3775A9&logo=pypi&logoColor=white" alt="PyPI"></a>
-  <a href="https://pypi.org/project/simplemem/"><img src="https://img.shields.io/pypi/pyversions/simplemem?style=flat&label=python&labelColor=555&color=3775A9&logo=python&logoColor=white" alt="Python"></a>
-  <a href="https://mcp.simplemem.cloud"><img src="https://img.shields.io/badge/MCP-mcp.simplemem.cloud-14B8A6?style=flat&labelColor=555" alt="MCP Server"></a>
-  <a href="https://github.com/aiming-lab/SimpleMem"><img src="https://img.shields.io/badge/Claude_Skills-supported-FFB000?style=flat&labelColor=555" alt="Claude Skills"></a>
-  <br/>
-  <a href="https://discord.gg/KA2zC32M"><img src="https://img.shields.io/badge/Discord-Join_Chat-5865F2?style=flat&labelColor=555&logo=discord&logoColor=white" alt="Discord"></a>
-  <a href="fig/wechat_logo3.JPG"><img src="https://img.shields.io/badge/WeChat-Group-07C160?style=flat&labelColor=555&logo=wechat&logoColor=white" alt="WeChat"></a>
-</p>
-
-<br/>
-
-[Overview](#-overview) • [Quick Start](#-quick-start) • [Docker](#-run-with-docker) • [Cross-Session Memory](#-cross-session-memory) • [MCP Server](#-mcp-server) • [Evaluation](#-evaluation) • [Citation](#-citation)
-
-</div>
-
-</div>
-
-<br/>
-
-## 🔥 News
-
-- **[02/09/2026]** 🚀 **Cross-Session Memory is Here — Outperforming Claude-Mem by 64%!** SimpleMem now supports **persistent memory across conversations**. On the LoCoMo benchmark, SimpleMem achieves a **64% performance boost** over Claude-Mem. Your agents can now recall context, decisions, and learnings from previous sessions automatically. [View Cross-Session Documentation →](cross/README.md)
-- **[01/20/2026]** **SimpleMem is now available on PyPI!** 📦 Install directly via `pip install simplemem`. [View Package Usage Guide →](docs/PACKAGE_USAGE.md)
-- **[01/19/2026]** **Added Local Memory Storage for SimpleMem Skill!** 💾 SimpleMem Skill now supports local memory storage within Claude Skills.
-- **[01/18/2026]** **SimpleMem now supports Claude Skills!** 🚀 Use SimpleMem in claude.ai for long-term memory across conversations. Register at [mcp.simplemem.cloud](https://mcp.simplemem.cloud), configure your token, and import the skill!
-- **[01/14/2026]** **SimpleMem MCP Server is now LIVE and Open Source!** 🎉 Cloud-hosted memory service at [mcp.simplemem.cloud](https://mcp.simplemem.cloud). Integrates with LM Studio, Cherry Studio, Cursor, Claude Desktop via **Streamable HTTP** MCP protocol. [View MCP Documentation →](MCP/README.md)
-- **[01/08/2026]** 🔥 Join our [Discord](https://discord.gg/KA2zC32M) and [WeChat Group](fig/wechat_logo3.JPG) to collaborate and exchange ideas!
-- **[01/05/2026]** SimpleMem paper was released on [arXiv](https://arxiv.org/abs/2601.02553)!
-
----
-
-## 📑 Table of Contents
-
-- [🌟 Overview](#-overview)
-- [🎯 Key Contributions](#-key-contributions)
-- [🚀 Performance Highlights](#-performance-highlights)
-- [📦 Installation](#-installation)
-- [🐳 Run with Docker](#-run-with-docker)
-- [⚡ Quick Start](#-quick-start)
-- [🧠 Cross-Session Memory](#-cross-session-memory)
-- [🔌 MCP Server](#-mcp-server)
-- [📊 Evaluation](#-evaluation)
-- [📝 Citation](#-citation)
-- [📄 License](#-license)
-- [🙏 Acknowledgments](#-acknowledgments)
-
----
-
-## 🌟 Overview
-
-<div align="center">
-<img src="fig/Fig_tradeoff.png" alt="Performance vs Efficiency Trade-off" width="900"/>
-
-*SimpleMem achieves superior F1 score (43.24%) with minimal token cost (~550), occupying the ideal top-left position.*
-</div>
-
-**SimpleMem** is an efficient memory framework based on **semantic lossless compression** that addresses the fundamental challenge of **efficient long-term memory for LLM agents**. Unlike existing systems that either passively accumulate redundant context or rely on expensive iterative reasoning loops, SimpleMem maximizes **information density** and **token utilization** through a three-stage pipeline:
-
-<table>
-<tr>
-<td width="33%" align="center">
-
-### 🔍 Stage 1
-**Semantic Structured Compression**
-
-Distills unstructured interactions into compact, multi-view indexed memory units
-
-</td>
-<td width="33%" align="center">
-
-### 🗂️ Stage 2
-**Online Semantic Synthesis**
-
-Intra-session process that instantly integrates related context into unified abstract representations to eliminate redundancy
-
-</td>
-<td width="33%" align="center">
-
-### 🎯 Stage 3
-**Intent-Aware Retrieval Planning**
-
-Infers search intent to dynamically determine retrieval scope and construct precise context efficiently
-
-</td>
-</tr>
-</table>
-
-<div align="center">
-<img src="fig/Fig_framework.png" alt="SimpleMem Framework" width="900"/>
-
-*The SimpleMem Architecture: (1) Semantic Structured Compression filters low-utility dialogue and converts informative windows into compact, context-independent memory units. (2) Online Semantic Synthesis consolidates related fragments during writing, maintaining a compact and coherent memory topology. (3) Intent-Aware Retrieval Planning infers search intent to adapt retrieval scope and query forms, enabling parallel multi-view retrieval and token-efficient context construction.*
-</div>
-
----
-
-### 🏆 Performance Comparison
-
-<div align="center">
-
-**Speed Comparison Demo**
-
-<video src="https://github.com/aiming-lab/SimpleMem/raw/main/fig/simplemem-new.mp4" controls width="900"></video>
-
-*SimpleMem vs. Baseline: Real-time speed comparison demonstration*
-
-</div>
-
-<div align="center">
-
-**LoCoMo-10 Benchmark Results (GPT-4.1-mini)**
-
-| Model | ⏱️ Construction Time | 🔎 Retrieval Time | ⚡ Total Time | 🎯 Average F1 |
-|:------|:--------------------:|:-----------------:|:-------------:|:-------------:|
-| A-Mem | 5140.5s | 796.7s | 5937.2s | 32.58% |
-| LightMem | 97.8s | 577.1s | 675.9s | 24.63% |
-| Mem0 | 1350.9s | 583.4s | 1934.3s | 34.20% |
-| **SimpleMem** ⭐ | **92.6s** | **388.3s** | **480.9s** | **43.24%** |
-
-</div>
-
-> **💡 Key Advantages:**
-> - 🏆 **Highest F1 Score**: 43.24% (+26.4% vs. Mem0, +75.6% vs. LightMem)
-> - ⚡ **Fastest Retrieval**: 388.3s (32.7% faster than LightMem, 51.3% faster than Mem0)
-> - 🚀 **Fastest End-to-End**: 480.9s total processing time (12.5× faster than A-Mem)
-
----
-
-## 🎯 Key Contributions
-
-### 1️⃣ Semantic Structured Compression
-
-SimpleMem applies an **implicit semantic density gating** mechanism integrated into the LLM generation process to filter redundant interaction content. The system reformulates raw dialogue streams into **compact memory units** — self-contained facts with resolved coreferences and absolute timestamps. Each unit is indexed through three complementary representations for flexible retrieval:
-
-<div align="center">
-
-| 🔍 Layer | 📊 Type | 🎯 Purpose | 🛠️ Implementation |
-|---------|---------|------------|-------------------|
-| **Semantic** | Dense | Conceptual similarity | Vector embeddings (1024-d) |
-| **Lexical** | Sparse | Exact term matching | BM25-style keyword index |
-| **Symbolic** | Metadata | Structured filtering | Timestamps, entities, persons |
-
-</div>
-
-**✨ Example Transformation:**
-```diff
-- Input:  "He'll meet Bob tomorrow at 2pm"  [❌ relative, ambiguous]
-+ Output: "Alice will meet Bob at Starbucks on 2025-11-16T14:00:00"  [✅ absolute, atomic]
+```
+TriMem/
+├── main.py                      # entry — wires the three tiers together
+├── config.py                    # all knobs (LLM, embedding, parallelism, profiles)
+├── core/
+│   ├── memory_builder.py        # window → atomic facts (compression + synthesis)
+│   ├── hybrid_retriever.py      # planning + parallel multi-view retrieval
+│   ├── answer_generator.py      # factual / inference prompt routing, profile-aware
+│   └── profile_manager.py       # progressive per-entity profile builder
+├── database/
+│   ├── vector_store.py          # LanceDB-backed atomic-fact store
+│   ├── profile_store.py         # SQLite KV store for persona profiles
+│   └── dialogue_store.py        # raw-dialogue store with context windows
+├── models/memory_entry.py       # MemoryEntry / Dialogue pydantic models
+├── utils/                       # LLM client + embedding model
+├── test_locomo10.py             # LoCoMo benchmark runner
+└── polish_prompts_with_claude_code.md  # TextGrad-style prompt evolution loop
 ```
 
 ---
 
-### 2️⃣ Online Semantic Synthesis
+## Installation
 
-Unlike traditional systems that rely on asynchronous background maintenance, SimpleMem performs synthesis **on-the-fly during the write phase**. Related memory units are synthesized into higher-level abstract representations within the current session scope, allowing repetitive or structurally similar experiences to be **denoised and compressed immediately**.
-
-**✨ Example Synthesis:**
-```diff
-- Fragment 1: "User wants coffee"
-- Fragment 2: "User prefers oat milk"
-- Fragment 3: "User likes it hot"
-+ Consolidated: "User prefers hot coffee with oat milk"
-```
-
-This proactive synthesis ensures the memory topology remains compact and free of redundant fragmentation.
-
----
-
-### 3️⃣ Intent-Aware Retrieval Planning
-
-Instead of fixed-depth retrieval, SimpleMem leverages the reasoning capabilities of the LLM to generate a **comprehensive retrieval plan**. Given a query, the planning module infers **latent search intent** to dynamically determine retrieval scope and depth:
-
-$$\{ q_{\text{sem}}, q_{\text{lex}}, q_{\text{sym}}, d \} \sim \mathcal{P}(q, H)$$
-
-The system then executes **parallel multi-view retrieval** across semantic, lexical, and symbolic indexes, and merges results through ID-based deduplication:
-
-<table>
-<tr>
-<td width="50%">
-
-**🔹 Simple Queries**
-- Direct fact lookup via single memory unit
-- Minimal retrieval depth
-- Fast response time
-
-</td>
-<td width="50%">
-
-**🔸 Complex Queries**
-- Aggregation across multiple events
-- Expanded retrieval depth
-- Comprehensive coverage
-
-</td>
-</tr>
-</table>
-
-**📈 Result**: 43.24% F1 score with **30× fewer tokens** than full-context methods.
-
----
-
-## 🚀 Performance Highlights
-
-### 📊 Benchmark Results (LoCoMo)
-
-<details open>
-<summary><b>🏆 Cross-Session Memory Comparison</b></summary>
-
-| System | LoCoMo Score | vs SimpleMem |
-|:-------|:------------:|:------------:|
-| **SimpleMem** | **48** | — |
-| Claude-Mem | 29.3 | **+64%** |
-
-</details>
-
-<details>
-<summary><b>🔬 High-Capability Models (GPT-4.1-mini)</b></summary>
-
-| Task Type | SimpleMem F1 | Mem0 F1 | Improvement |
-|:----------|:------------:|:-------:|:-----------:|
-| **MultiHop** | 43.46% | 30.14% | **+43.8%** |
-| **Temporal** | 58.62% | 48.91% | **+19.9%** |
-| **SingleHop** | 51.12% | 41.3% | **+23.8%** |
-
-</details>
-
-<details>
-<summary><b>⚙️ Efficient Models (Qwen2.5-1.5B)</b></summary>
-
-| Metric | SimpleMem | Mem0 | Notes |
-|:-------|:---------:|:----:|:------|
-| **Average F1** | 25.23% | 23.77% | Competitive with 99× smaller model |
-
-</details>
-
----
-
-## 📦 Installation
-
-### 📝 Notes for First-Time Users
-
-- Ensure you are using **Python 3.10 in your active environment**, not just installed globally.
-- An OpenAI-compatible API key must be configured **before running any memory construction or retrieval**, otherwise initialization may fail.
-- When using non-OpenAI providers (e.g., Qwen or Azure OpenAI), verify both the model name and `OPENAI_BASE_URL` in `config.py`.
-- For large dialogue datasets, enabling parallel processing can significantly reduce memory construction time.
-
-### 📋 Requirements
-
-- 🐍 Python 3.10
-- 🔑 OpenAI-compatible API (OpenAI, Qwen, Azure OpenAI, etc.)
-
-### 🛠️ Setup
+Requirements: Python 3.10+, an OpenAI-compatible API key.
 
 ```bash
-# 📥 Clone repository
-git clone https://github.com/aiming-lab/SimpleMem.git
-cd SimpleMem
+git clone <this-repo>.git TriMem
+cd TriMem
 
-# 📦 Install dependencies
 pip install -r requirements.txt
-
-# ⚙️ Configure API settings
-cp config.py.example config.py
-# Edit config.py with your API key and preferences
 ```
 
-### ⚙️ Configuration Example
+Edit `config.py` to set your provider, key, and model:
 
 ```python
-# config.py
-OPENAI_API_KEY = "your-api-key"
-OPENAI_BASE_URL = None  # or custom endpoint for Qwen/Azure
+OPENAI_API_KEY  = "sk-..."
+OPENAI_BASE_URL = "https://openrouter.ai/api/v1"   # or None for OpenAI default
+LLM_MODEL       = "openai/gpt-4.1-mini"
 
-LLM_MODEL = "gpt-4.1-mini"
-EMBEDDING_MODEL = "Qwen/Qwen3-Embedding-0.6B"  # State-of-the-art retrieval
+EMBEDDING_MODEL     = "Qwen/Qwen3-Embedding-0.6B"  # local, no API call
+EMBEDDING_DIMENSION = 1024
+
+ENABLE_PROFILES     = True                         # turn on the persona tier
+PROFILE_STORE_PATH  = "./profile_store.db"
 ```
 
 ---
 
-## 🐳 Run with Docker
-
-The **MCP Server** can be run in Docker for a consistent, isolated environment. Data (LanceDB and user DB) is persisted in a host volume.
-
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/)
-
-### Quick run
-
-```bash
-# From the repository root
-docker compose up -d
-```
-
-- **Web UI:** http://localhost:8000/
-- **REST API:** http://localhost:8000/api/
-- **MCP (SSE):** http://localhost:8000/mcp/sse?token=&lt;TOKEN&gt;
-
-Data is stored in `./data` on the host (created automatically).
-
-### Custom configuration
-
-1. Copy the environment template and edit it:
-   ```bash
-   cp .env.example .env
-   # Edit .env: set JWT_SECRET_KEY, ENCRYPTION_KEY, LLM_PROVIDER, model URLs, etc.
-   ```
-2. Run with the env file:
-   ```bash
-   docker compose --env-file .env up -d
-   ```
-
-### Using Ollama on the host
-
-When `LLM_PROVIDER=ollama` and Ollama runs on your machine (not in Docker), set in `.env`:
-
-```bash
-LLM_PROVIDER=ollama
-OLLAMA_BASE_URL=http://host.docker.internal:11434/v1
-```
-
-On Linux, `host.docker.internal` is enabled automatically via the Compose file.
-
-### Useful commands
-
-```bash
-docker compose logs -f simplemem   # Follow logs
-docker compose down                 # Stop and remove containers
-```
-
-> 📖 For self-hosting the MCP server (Docker or bare metal), see [MCP Documentation](MCP/README.md).
-
----
-
-## ⚡ Quick Start
-
-### 🧠 Understanding the Basic Workflow
-
-At a high level, SimpleMem works as a long-term memory system for LLM-based agents. The workflow consists of three simple steps:
-
-1. **Store information** – Dialogues or facts are processed and converted into structured, atomic memories.
-2. **Index memory** – Stored memories are organized using semantic embeddings and structured metadata.
-3. **Retrieve relevant memory** – When a query is made, SimpleMem retrieves the most relevant stored information based on meaning rather than keywords.
-
-This design allows LLM agents to maintain context, recall past information efficiently, and avoid repeatedly processing redundant history.
-
-### 🎓 Basic Usage
+## Quick start
 
 ```python
-from main import SimpleMemSystem
+from main import TriMemSystem
 
-# 🚀 Initialize system
-system = SimpleMemSystem(clear_db=True)
+system = TriMemSystem(clear_db=True)
 
-# 💬 Add dialogues (Stage 1: Semantic Structured Compression)
-system.add_dialogue("Alice", "Bob, let's meet at Starbucks tomorrow at 2pm", "2025-11-15T14:30:00")
-system.add_dialogue("Bob", "Sure, I'll bring the market analysis report", "2025-11-15T14:31:00")
+# Ingest dialogues
+system.add_dialogue("Alice", "Bob, let's meet at Starbucks tomorrow at 2pm",
+                    "2025-11-15T14:30:00")
+system.add_dialogue("Bob",   "Sure, I'll bring the market analysis report",
+                    "2025-11-15T14:31:00")
 
-# ✅ Finalize atomic encoding
+# Flush the buffered window (atomic facts + profiles are written here)
 system.finalize()
 
-# 🔎 Query with intent-aware retrieval (Stage 3: Intent-Aware Retrieval Planning)
-answer = system.ask("When and where will Alice and Bob meet?")
-print(answer)
-# Output: "16 November 2025 at 2:00 PM at Starbucks"
+# Factual question — answered from atomic facts + source turns
+print(system.ask("When and where will Alice and Bob meet?"))
+
+# Inference question — also draws on Alice/Bob's persona profiles
+print(system.ask("Would Bob enjoy a strategy board game?"))
 ```
+
+What happens internally on `finalize()`:
+
+1. The dialogue window is compressed into atomic memory entries and written to the vector store.
+2. `ProfileManager.update_profiles(entries)` groups the new entries by `persons` and updates each persona profile with one LLM call.
+3. Raw dialogues remain in `DialogueStore` and are reachable via `source_dialogue_ids`.
+
+On `ask(...)`:
+
+1. The hybrid retriever plans, generates queries, and merges semantic + lexical + symbolic results.
+2. Persons appearing in the retrieved facts are looked up in the profile store (no LLM call).
+3. The answer generator chooses **factual** or **inference** mode based on the question, then synthesizes the final answer using all three tiers.
 
 ---
 
-### 🚄 Advanced: Parallel Processing
+## Configuration knobs
 
-For large-scale dialogue processing, enable parallel mode:
+The most relevant settings (full list in `config.py`):
 
-```python
-system = SimpleMemSystem(
-    clear_db=True,
-    enable_parallel_processing=True,  # ⚡ Parallel memory building
-    max_parallel_workers=8,
-    enable_parallel_retrieval=True,   # 🔍 Parallel query execution
-    max_retrieval_workers=4
-)
-```
-
-> **💡 Pro Tip**: Parallel processing significantly reduces latency for batch operations!
+| Section | Setting | Purpose |
+|:--------|:--------|:--------|
+| LLM | `LLM_MODEL`, `OPENAI_BASE_URL`, `ENABLE_THINKING`, `USE_STREAMING` | Provider + decoding |
+| Memory build | `WINDOW_SIZE`, `OVERLAP_SIZE`, `SOURCE_CONTEXT_WINDOW` | Sliding window + how many surrounding turns to pull when answering |
+| Retrieval | `SEMANTIC_TOP_K`, `KEYWORD_TOP_K`, `STRUCTURED_TOP_K` | Top-k per view |
+| Planning | `ENABLE_PLANNING`, `ENABLE_REFLECTION`, `MAX_REFLECTION_ROUNDS` | Intent-aware retrieval planning loop |
+| Parallelism | `ENABLE_PARALLEL_PROCESSING`, `MAX_PARALLEL_WORKERS`, `ENABLE_PARALLEL_RETRIEVAL`, `MAX_RETRIEVAL_WORKERS` | Window/query concurrency |
+| **Profiles** | `ENABLE_PROFILES`, `PROFILE_STORE_PATH` | Toggle the persona tier |
 
 ---
 
-## ❓ Common Setup Issues & Troubleshooting
+## Evaluation
 
-If you encounter issues while setting up or running SimpleMem for the first time, check the following common cases:
-
-### 1️⃣ API Key Not Detected
-- Ensure your API key is correctly set in `config.py`
-- For OpenAI-compatible providers (Qwen, Azure, etc.), verify that `OPENAI_BASE_URL` is configured correctly
-- Restart your Python environment after updating the key
-
-### 2️⃣ Python Version Mismatch
-- SimpleMem requires **Python 3.10**
-- Check your version using:
-  ```bash
-  python --version
-  ```
-
----
-
-## 🧠 Cross-Session Memory
-
-**SimpleMem-Cross** extends SimpleMem with persistent cross-conversation memory capabilities. Agents can recall context, decisions, and observations from previous sessions — enabling continuity across conversations without manual context re-injection.
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Session Lifecycle** | Full session management with start/record/stop/end lifecycle |
-| **Automatic Context Injection** | Token-budgeted context from previous sessions injected at session start |
-| **Event Collection** | Record messages, tool uses, file changes with automatic redaction |
-| **Observation Extraction** | Heuristic extraction of decisions, discoveries, and learnings |
-| **Provenance Tracking** | Every memory entry links back to source evidence |
-| **Consolidation** | Decay, merge, and prune old memories to maintain quality |
-
-### Quick Example
-
-```python
-from cross.orchestrator import create_orchestrator
-
-async def main():
-    orch = create_orchestrator(project="my-project")
-
-    # Start session — previous context is injected automatically
-    result = await orch.start_session(
-        content_session_id="session-001",
-        user_prompt="Continue building the REST API",
-    )
-    print(result["context"])  # Relevant context from previous sessions
-
-    # Record events during the session
-    await orch.record_message(result["memory_session_id"], "User asked about JWT")
-    await orch.record_tool_use(
-        result["memory_session_id"],
-        tool_name="read_file",
-        tool_input="auth/jwt.py",
-        tool_output="class JWTHandler: ...",
-    )
-
-    # Finalize — extracts observations, generates summary, stores memories
-    report = await orch.stop_session(result["memory_session_id"])
-    print(f"Stored {report.entries_stored} memory entries")
-
-    await orch.end_session(result["memory_session_id"])
-    orch.close()
-```
-
-### Architecture
-
-```
-Agent Frameworks (Claude Code / Cursor / custom)
-                    |
-     +--------------+--------------+
-     |                             |
-Hook/Lifecycle Adapter      HTTP/MCP API (FastAPI)
-     |                             |
-     +--------------+--------------+
-                    |
-           CrossMemOrchestrator
-                    |
-  +-----------------+------------------+
-  |                 |                  |
-Session Manager  Context Injector  Consolidation
-(SQLite)         (budgeted bundle) (decay/merge/prune)
-  |                 |                  |
-  +---------+-------+                  |
-            |                          |
-   Cross-Session Vector Store (LanceDB) <--+
-```
-
-### Module Reference
-
-| Module | Description |
-|--------|-------------|
-| `cross/types.py` | Pydantic models, enums, records |
-| `cross/storage_sqlite.py` | SQLite backend for sessions, events, observations |
-| `cross/storage_lancedb.py` | LanceDB vector store with provenance |
-| `cross/hooks.py` | Lifecycle hooks (SessionStart/ToolUse/End) |
-| `cross/collectors.py` | Event collection with 3-tier redaction |
-| `cross/session_manager.py` | Full session lifecycle orchestration |
-| `cross/context_injector.py` | Token-budgeted context builder |
-| `cross/orchestrator.py` | Top-level facade and factory |
-| `cross/api_http.py` | FastAPI REST endpoints |
-| `cross/api_mcp.py` | MCP tool definitions |
-| `cross/consolidation.py` | Memory maintenance worker |
-
-> 📖 For detailed API documentation, see [Cross-Session README](cross/README.md)
-
----
-
-## 🔌 MCP Server
-
-SimpleMem is available as a **cloud-hosted memory service** via the Model Context Protocol (MCP), enabling seamless integration with AI assistants like Claude Desktop, Cursor, and other MCP-compatible clients.
-
-**🌐 Cloud Service**: [mcp.simplemem.cloud](https://mcp.simplemem.cloud) — or self-host the MCP server locally using [Docker](#-run-with-docker).
-
-### Key Features
-
-| Feature | Description |
-|---------|-------------|
-| **Streamable HTTP** | MCP 2025-03-26 protocol with JSON-RPC 2.0 |
-| **Multi-tenant Isolation** | Per-user data tables with token authentication |
-| **Hybrid Retrieval** | Semantic search + keyword matching + metadata filtering |
-| **Production Optimized** | Faster response times with OpenRouter integration |
-
-### Quick Configuration
-
-```json
-{
-  "mcpServers": {
-    "simplemem": {
-      "url": "https://mcp.simplemem.cloud/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_TOKEN"
-      }
-    }
-  }
-}
-```
-
-> 📖 For detailed setup instructions and self-hosting guide, see [MCP Documentation](MCP/README.md)
-
----
-
-## 📊 Evaluation
-
-### 🧪 Run Benchmark Tests
+LoCoMo benchmark runner lives in `test_locomo10.py`:
 
 ```bash
-# 🎯 Full LoCoMo benchmark
-python test_locomo10.py
-
-# 📉 Subset evaluation (5 samples)
-python test_locomo10.py --num-samples 5
-
-# 💾 Custom output file
-python test_locomo10.py --result-file my_results.json
+python test_locomo10.py                       # full benchmark
+python test_locomo10.py --num-samples 5       # quick subset
+python test_locomo10.py --result-file my.json # custom output path
 ```
 
 ---
 
-### 🔬 Reproduce Paper Results
+## Prompt Evolution
 
-Use the exact configurations in `config.py`:
-- **🚀 High-capability**: GPT-4.1-mini, Qwen3-Plus
-- **⚙️ Efficient**: Qwen2.5-1.5B, Qwen2.5-3B
-- **🔍 Embedding**: Qwen3-Embedding-0.6B (1024-d)
+End-to-end quality of TriMem is dominated by two prompts:
 
----
+- **P_ext** — the fact-extraction prompt that turns a dialogue window into atomic memory units (in `core/memory_builder.py`).
+- **P_prof** — the entity profile construction prompt that updates each persona profile from newly extracted facts (in `core/profile_manager.py`).
 
-## 📝 Citation
-
-If you use SimpleMem in your research, please cite:
-
-```bibtex
-@article{simplemem2025,
-  title={SimpleMem: Efficient Lifelong Memory for LLM Agents},
-  author={Liu, Jiaqi and Su, Yaofeng and Xia, Peng and Zhou, Yiyang and Han, Siwei and  Zheng, Zeyu and Xie, Cihang and Ding, Mingyu and Yao, Huaxiu},
-  journal={arXiv preprint arXiv:2601.02553},
-  year={2025},
-  url={https://github.com/aiming-lab/SimpleMem}
-}
-```
+Rather than hand-tuning these indefinitely, TriMem refines them with a **TextGrad-style** loop. The evaluation result JSON plays the role of the *loss*, and a strong LLM (we use Claude Opus 4.6) plays the role of the **textual backward pass** — diagnosing systematic failure patterns and rewriting `P_ext` / `P_prof` in place. The full procedure lives in [`polish_prompts.md`](polish_prompts.md).
 
 ---
 
-## 📄 License
+## Acknowledgments
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+Dependencies: [Qwen3-Embedding](https://github.com/QwenLM/Qwen) for retrieval, [LanceDB](https://lancedb.com/) for vector storage, [LoCoMo](https://github.com/snap-research/locomo) for evaluation.
 
 ---
-
-## 🙏 Acknowledgments
-
-We would like to thank the following projects and teams:
-
-- 🔍 **Embedding Model**: [Qwen3-Embedding](https://github.com/QwenLM/Qwen) - State-of-the-art retrieval performance
-- 🗄️ **Vector Database**: [LanceDB](https://lancedb.com/) - High-performance columnar storage
-- 📊 **Benchmark**: [LoCoMo](https://github.com/snap-research/locomo) - Long-context memory evaluation framework

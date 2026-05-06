@@ -1,5 +1,5 @@
 """
-LoComo10 Dataset Test for SimpleMem System
+LoComo10 Dataset Test for TriMem System
 Tests retrieval time, token usage, and answer quality
 """
 from pathlib import Path
@@ -19,7 +19,7 @@ from bert_score import score as bert_score
 from sentence_transformers import SentenceTransformer
 from sentence_transformers.util import pytorch_cos_sim
 
-from main import SimpleMemSystem
+from main import TriMemSystem
 from models.memory_entry import Dialogue
 
 # Download required NLTK data
@@ -258,9 +258,14 @@ def load_locomo_dataset(file_path: Union[str, Path]) -> List[LoCoMoSample]:
 # ============================================================================
 
 def simple_tokenize(text):
-    """Simple tokenization function."""
+    """Simple tokenization function. Strips quotes and punctuation for fair comparison."""
     text = str(text)
-    return text.lower().replace('.', ' ').replace(',', ' ').replace('!', ' ').replace('?', ' ').split()
+    # Remove quotes, apostrophes used as quotes, and common punctuation
+    import re
+    text = text.lower()
+    text = re.sub(r'["\'\u201c\u201d\u2018\u2019`]', '', text)  # Remove all quote chars
+    text = re.sub(r'[.!?,;:()\[\]{}/\\]', ' ', text)  # Replace punctuation with space
+    return text.split()
 
 def calculate_rouge_scores(prediction: str, reference: str) -> Dict[str, float]:
     """Calculate ROUGE scores for prediction against reference."""
@@ -624,13 +629,14 @@ def aggregate_metrics(all_metrics: List[Dict[str, float]], all_categories: List[
 
 
 class LoCoMoTester:
-    """Test SimpleMem system on LoComo10 dataset"""
+    """Test TriMem system on LoComo10 dataset"""
 
-    def __init__(self, system: SimpleMemSystem, dataset_path: str, use_llm_judge: bool = False, test_workers: int = None):
+    def __init__(self, system: TriMemSystem, dataset_path: str, use_llm_judge: bool = False, test_workers: int = None, skip_categories: set = None):
         self.system = system
         self.dataset_path = Path(dataset_path)
         self.use_llm_judge = use_llm_judge
         self.test_workers = test_workers
+        self.skip_categories = skip_categories or set()
 
         # Initialize judge client if needed
         self.judge_client = None
@@ -776,11 +782,17 @@ Return ONLY the JSON, no other text.
         add_time = time.time() - add_start
         print(f"Memory building time: {add_time:.2f}s")
 
+        # Filter out skipped categories
+        qa_list = sample.qa
+        if self.skip_categories:
+            qa_list = [qa for qa in qa_list if (qa.category if qa.category is not None else 0) not in self.skip_categories]
+            print(f"Testing {len(qa_list)} questions (skipped categories: {self.skip_categories})")
+
         # Test each question (parallel or sequential)
-        if enable_parallel_questions and len(sample.qa) > 1:
-            sample_results = self._test_questions_parallel(sample.qa)
+        if enable_parallel_questions and len(qa_list) > 1:
+            sample_results = self._test_questions_parallel(qa_list)
         else:
-            sample_results = self._test_questions_sequential(sample.qa)
+            sample_results = self._test_questions_sequential(qa_list)
 
         return sample_results
     
@@ -887,7 +899,12 @@ Return ONLY the JSON, no other text.
             adversarial_answer = qa.adversarial_answer if qa.adversarial_answer else "Unknown answer"
             answer = self.generate_category5_answer(question, contexts, adversarial_answer)
         else:
-            answer = self.system.answer_generator.generate_answer(question, contexts)
+            profile_context = ""
+            if self.system.profile_manager:
+                profile_context = self.system.profile_manager.get_profiles_for_query(question, contexts)
+            answer = self.system.answer_generator.generate_answer(
+                question, contexts, profile_context=profile_context
+            )
 
         answer_time = time.time() - answer_start
 
@@ -945,7 +962,7 @@ Return ONLY the JSON, no other text.
     def run_test(self, num_samples: int = None, save_results: bool = True, result_file: str = 'locomo10_test_results.json', enable_parallel_questions: bool = False):
         """Run full test on dataset"""
         print("\n" + "="*80)
-        print(" SimpleMem LoComo10 Dataset Test".center(80))
+        print(" TriMem LoComo10 Dataset Test".center(80))
         print("="*80 + "\n")
 
         # Load dataset
@@ -1031,30 +1048,33 @@ Return ONLY the JSON, no other text.
 def main():
     import argparse
 
-    parser = argparse.ArgumentParser(description='Test SimpleMem on LoComo10 dataset')
-    parser.add_argument('--dataset', type=str, default='test_ref/locomo10.json',
+    parser = argparse.ArgumentParser(description='Test TriMem on LoComo10 dataset')
+    parser.add_argument('--dataset', type=str, default='./test_ref/locomo10.json',
                        help='Path to LoComo10 dataset')
-    parser.add_argument('--num-samples', type=int, default=None,
+    parser.add_argument('--num-samples', type=int, default=1,
                        help='Number of samples to test (default: all)')
-    parser.add_argument('--no-save', action='store_true',
+    parser.add_argument('--no-save', default=False, action='store_true',
                        help='Do not save results to file')
-    parser.add_argument('--result-file', type=str, default='locomo10_test_results.json',
+    parser.add_argument('--result-file', type=str, default='locomo10_test_gpt5nano_step1.json.json',
                        help='Path to the result file')
-    parser.add_argument('--parallel-questions', action='store_true',
+    parser.add_argument('--parallel-questions', default=True, action='store_true',
                        help='Enable parallel processing of questions within each sample')
-    parser.add_argument('--llm-judge', action='store_true',
+    parser.add_argument('--llm-judge', default=False, action='store_true',
                        help='Enable LLM-as-judge evaluation for semantic answer comparison')
-    parser.add_argument('--test-workers', type=int, default=None,
-                       help='Number of parallel workers for question testing (default: use config MAX_RETRIEVAL_WORKERS)')
+    parser.add_argument('--test-workers', type=int, default=8,
+                       help='Number of parallel workers for question testing (default: 3)')
+    parser.add_argument('--skip-categories', type=int, nargs='+', default=[5],
+                       help='Category numbers to skip (e.g. --skip-categories 5)')
 
     args = parser.parse_args()
 
     # Create system
-    print("Initializing SimpleMem system...")
-    system = SimpleMemSystem(clear_db=True)
+    print("Initializing TriMem system...")
+    system = TriMemSystem(clear_db=True)
 
     # Create tester
-    tester = LoCoMoTester(system, args.dataset, use_llm_judge=args.llm_judge, test_workers=args.test_workers)
+    skip_cats = set(args.skip_categories)
+    tester = LoCoMoTester(system, args.dataset, use_llm_judge=args.llm_judge, test_workers=args.test_workers, skip_categories=skip_cats)
     
     if args.llm_judge:
         print("LLM-as-judge evaluation enabled")
