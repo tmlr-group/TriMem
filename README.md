@@ -34,7 +34,7 @@ TriMem/
 Requirements: Python 3.10+, an OpenAI-compatible API key.
 
 ```bash
-git clone <this-repo>.git TriMem
+git clone https://github.com/tmlr-group/TriMem.git
 cd TriMem
 
 pip install -r requirements.txt
