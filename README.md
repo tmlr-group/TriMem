@@ -1,6 +1,6 @@
 <div align="center">
 
-<img alt="TriMem logo" src="fig/trimem_logo.svg" width="520">
+<img alt="TriMem logo" src="fig/trimem_logo.svg" width="180">
 
 ## Rethinking How to Remember: Beyond Atomic Facts in Lifelong LLM Agent Memory
 
