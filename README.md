@@ -131,6 +131,18 @@ Rather than hand-tuning these indefinitely, TriMem refines them with a **TextGra
 
 ---
 
+## 📄 Citation
+If you find this environment useful, please consider citing our work:
+```
+@article{sun2026trimem,
+  title   = {Rethinking How to Remember: Beyond Atomic Facts in Lifelong LLM Agent Memory},
+  author  = {Jingwei Sun and Jianing Zhu and Jiangchao Yao and Tongliang Liu and Bo Han},
+  journal = {arXiv preprint},
+  year    = {2026}
+}
+```
+---
+
 ## Acknowledgments
 
 Dependencies: [Qwen3-Embedding](https://github.com/QwenLM/Qwen) for retrieval, [LanceDB](https://lancedb.com/) for vector storage, [LoCoMo](https://github.com/snap-research/locomo) for evaluation.
