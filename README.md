@@ -137,7 +137,7 @@ If you find this environment useful, please consider citing our work:
 @article{sun2026trimem,
   title   = {Rethinking How to Remember: Beyond Atomic Facts in Lifelong LLM Agent Memory},
   author  = {Jingwei Sun and Jianing Zhu and Jiangchao Yao and Tongliang Liu and Bo Han},
-  journal = {arXiv preprint},
+  journal = {arXiv preprint arXiv:2605.19952},
   year    = {2026}
 }
 ```
