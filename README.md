@@ -134,11 +134,13 @@ Rather than hand-tuning these indefinitely, TriMem refines them with a **TextGra
 ## 📄 Citation
 If you find this environment useful, please consider citing our work:
 ```
-@article{sun2026trimem,
-  title   = {Rethinking How to Remember: Beyond Atomic Facts in Lifelong LLM Agent Memory},
-  author  = {Jingwei Sun and Jianing Zhu and Jiangchao Yao and Tongliang Liu and Bo Han},
-  journal = {arXiv preprint arXiv:2605.19952},
-  year    = {2026}
+@inproceedings{
+sun2026trimem,
+title={Rethinking How to Remember: Beyond Atomic Facts in Lifelong {LLM} Agent Memory},
+author  = {Jingwei Sun and Jianing Zhu and Jiangchao Yao and Tongliang Liu and Bo Han},
+booktitle={The Fortieth Annual Conference on Neural Information Processing Systems},
+year={2026},
+url={https://openreview.net/forum?id=h9Je8c91Qi}
 }
 ```
 ---
